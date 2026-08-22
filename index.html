@@ -5,6 +5,18 @@
 #karsak-modern .shell{max-width:430px;margin:0 auto;padding:18px 16px 22px}
 #karsak-modern .top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
 #karsak-modern .round{width:44px;height:44px;border-radius:14px;border:1px solid #1d2935;background:#0e151d;color:#fff;display:grid;place-items:center;font-size:22px}
+#karsak-modern .settings{display:none}
+#karsak-modern .settings.active{display:block}
+#karsak-modern .settings-card{background:#f7f9fb;color:#13202a;border:1px solid #d9e2e9;border-radius:24px;padding:18px;margin-top:8px;box-shadow:0 12px 35px rgba(0,0,0,.18)}
+#karsak-modern .settings-card h3{margin:0 0 4px;font-size:18px;color:#13202a}
+#karsak-modern .settings-card p{margin:0 0 14px;color:#697783;font-size:12px;line-height:1.45}
+#karsak-modern .setting-row{padding:13px 0;border-bottom:1px solid #e3e8ed}
+#karsak-modern .setting-row:last-child{border-bottom:0}
+#karsak-modern .setting-row label{display:flex;justify-content:space-between;gap:12px;align-items:center;font-size:13px;font-weight:850;color:#14212c}
+#karsak-modern .setting-row small{display:block;color:#71808c;font-size:11px;margin-top:4px;line-height:1.4}
+#karsak-modern .setting-row input[type="range"]{width:100%;margin-top:10px;accent-color:#e6a72b}
+#karsak-modern .setting-row select{width:100%;margin-top:10px;min-height:44px;border:1px solid #cbd6de;background:#fff;color:#14212c;border-radius:13px;padding:9px 11px;font:inherit;font-size:13px}
+#karsak-modern .setting-toggle{width:46px;height:26px;accent-color:#e6a72b}
 #karsak-modern .brand{text-align:center;padding:14px 0 22px}
 #karsak-modern .brand-mark{font-weight:1000;font-size:58px;line-height:1;color:#f2b84b;letter-spacing:-5px}
 #karsak-modern .eyebrow{font-size:11px;letter-spacing:5px;color:#f2b84b;font-weight:800;margin-top:8px}
@@ -146,7 +158,7 @@
 <div class="shell">
   <div class="top">
     <button class="round" type="button" aria-label="Menü">☰</button>
-    <button class="round" type="button" aria-label="Einstellungen">⚙</button>
+    <button class="round" id="openSettings" type="button" aria-label="Einstellungen">⚙</button>
   </div>
 
   <div class="home" id="homeView">
@@ -326,6 +338,64 @@
     </section>
   </div>
 
+  <div class="settings" id="settingsView">
+    <div class="week-top">
+      <button class="round" id="settingsBack" type="button" aria-label="Zurück">←</button>
+      <div style="text-align:center"><h2>Einstellungen</h2><p>Anzeige, Lautstärke und Stimme</p></div>
+      <div style="width:44px"></div>
+    </div>
+    <section class="settings-card">
+      <h3>Darstellung</h3>
+      <p>Hier stellst du die Lesbarkeit des Terminplaners ein.</p>
+      <div class="setting-row">
+        <label for="brightnessRange"><span>Helligkeit</span><b id="brightnessValue">100 %</b></label>
+        <input id="brightnessRange" type="range" min="75" max="125" step="5" value="100">
+      </div>
+      <div class="setting-row">
+        <label for="contrastToggle"><span>Hoher Kontrast</span><input class="setting-toggle" id="contrastToggle" type="checkbox"></label>
+        <small>Helle Auswahlfelder und kräftigere Schrift.</small>
+      </div>
+      <div class="setting-row">
+        <label for="fontSizeRange"><span>Schriftgröße</span><b id="fontSizeValue">100 %</b></label>
+        <input id="fontSizeRange" type="range" min="90" max="120" step="5" value="100">
+      </div>
+      <h3 style="margin-top:20px">Sprachassistent</h3>
+      <p>Stimme und Lautstärke für die gesprochenen Fragen.</p>
+      <div class="setting-row">
+        <label for="volumeRange"><span>Lautstärke</span><b id="volumeValue">100 %</b></label>
+        <input id="volumeRange" type="range" min="0" max="100" step="5" value="100">
+      </div>
+      <div class="setting-row">
+        <label for="voiceGender"><span>Stimme</span></label>
+        <select id="voiceGender"><option value="female">Weiblich</option><option value="male">Männlich</option><option value="auto">Automatisch</option></select>
+      </div>
+      <div class="setting-row">
+        <label for="voiceSelect"><span>Verfügbare deutsche Stimme</span></label>
+        <select id="voiceSelect"><option value="">Automatisch auswählen</option></select>
+      </div>
+      <h3 style="margin-top:20px">Abfahrwarnung</h3>
+      <p>Alarm und Sprachhinweis, wenn du zu einem Termin losfahren solltest.</p>
+      <div class="setting-row">
+        <label for="alarmToggle"><span>Abfahralarm</span><input class="setting-toggle" id="alarmToggle" type="checkbox" checked></label>
+        <small>Warnt dich akustisch, wenn die Abfahrzeit erreicht ist.</small>
+      </div>
+      <div class="setting-row">
+        <label for="alarmVolumeRange"><span>Alarm-Lautstärke</span><b id="alarmVolumeValue">100 %</b></label>
+        <input id="alarmVolumeRange" type="range" min="0" max="100" step="5" value="100">
+      </div>
+      <div class="setting-row">
+        <label for="alarmTone"><span>Alarmton</span></label>
+        <select id="alarmTone"><option value="double">Doppelton</option><option value="triple">Dreifachton</option><option value="soft">Sanfter Ton</option></select>
+      </div>
+      <div class="save-row" style="grid-template-columns:1fr">
+        <button type="button" class="save" id="testVoice">Stimme testen</button>
+      </div>
+      <div class="save-row" style="grid-template-columns:1fr">
+        <button type="button" id="testAlarm">Alarm testen</button>
+      </div>
+    </section>
+  </div>
+
   <nav class="bottom" aria-label="Hauptnavigation">
     <button class="active" id="navHome" type="button"><span class="i">⌂</span>START</button>
     <button id="navWeek" type="button"><span class="i">▦</span>KALENDER</button>
@@ -403,7 +473,7 @@
   function nextAppointment(){const current=new Date();const nowMinutes=current.getHours()*60+current.getMinutes();return currentToday().find(a=>minutes(a.time)>=nowMinutes)||currentToday()[0]||null}
   function simulatedTrafficDelay(){const m=new Date().getMinutes();return m%3===0?20:m%2===0?10:0}
   function formatClock(total){total=(total+1440)%1440;return String(Math.floor(total/60)).padStart(2,'0')+':'+String(total%60).padStart(2,'0')}
-  function renderNavigation(){const a=nextAppointment();const status=q('#navStatus');const pill=q('#trafficPill');if(!a){q('#navAppointment').textContent='Kein Termin';q('#navAddress').textContent='—';q('#navLeaveTime').textContent='—';q('#navHeadline').textContent='Heute keine weiteren Termine';q('#navMessage').textContent='Du musst aktuell zu keinem Termin losfahren.';status.classList.remove('alert','late');pill.className='traffic-pill';pill.textContent='● Kein Verkehr nötig';return}const baseDrive=30,buffer=15,delay=simulatedTrafficDelay(),drive=baseDrive+delay,appt=minutes(a.time),leave=appt-drive-buffer,nowMin=new Date().getHours()*60+new Date().getMinutes(),until=leave-nowMin;q('#navAppointment').textContent=a.time+' · '+a.customer;q('#navAddress').textContent=a.address;q('#navDriveTime').textContent=drive+' Min';q('#navBuffer').textContent=buffer+' Min';q('#navLeaveTime').textContent=formatClock(leave);status.classList.remove('alert','late');pill.className='traffic-pill';if(delay>=20){pill.classList.add('bad');pill.textContent='● Starker Verkehr · +'+delay+' Min'}else if(delay>0){pill.classList.add('warn');pill.textContent='● Mehr Verkehr · +'+delay+' Min'}else{pill.textContent='● Verkehr normal'}if(until<=0){q('#navHeadline').textContent='Jetzt losfahren';q('#navMessage').textContent='Deine späteste Abfahrzeit ist erreicht oder überschritten.';status.classList.add('late');speakQuestion('Achtung. Bitte jetzt losfahren, damit du nicht zu spät kommst.')}else if(until<=60){q('#navHeadline').textContent='Abfahrt in '+until+' Minuten';q('#navMessage').textContent='Für '+a.customer+' solltest du spätestens um '+formatClock(leave)+' Uhr losfahren.';status.classList.add('alert')}else{q('#navHeadline').textContent='Noch '+until+' Minuten bis zur Abfahrt';q('#navMessage').textContent='Geplante Abfahrt spätestens um '+formatClock(leave)+' Uhr.'}}
+  function renderNavigation(){const a=nextAppointment();const status=q('#navStatus');const pill=q('#trafficPill');if(!a){q('#navAppointment').textContent='Kein Termin';q('#navAddress').textContent='—';q('#navLeaveTime').textContent='—';q('#navHeadline').textContent='Heute keine weiteren Termine';q('#navMessage').textContent='Du musst aktuell zu keinem Termin losfahren.';status.classList.remove('alert','late');pill.className='traffic-pill';pill.textContent='● Kein Verkehr nötig';return}const baseDrive=30,buffer=15,delay=simulatedTrafficDelay(),drive=baseDrive+delay,appt=minutes(a.time),leave=appt-drive-buffer,nowMin=new Date().getHours()*60+new Date().getMinutes(),until=leave-nowMin;q('#navAppointment').textContent=a.time+' · '+a.customer;q('#navAddress').textContent=a.address;q('#navDriveTime').textContent=drive+' Min';q('#navBuffer').textContent=buffer+' Min';q('#navLeaveTime').textContent=formatClock(leave);status.classList.remove('alert','late');pill.className='traffic-pill';if(delay>=20){pill.classList.add('bad');pill.textContent='● Starker Verkehr · +'+delay+' Min'}else if(delay>0){pill.classList.add('warn');pill.textContent='● Mehr Verkehr · +'+delay+' Min'}else{pill.textContent='● Verkehr normal'}if(until<=0){q('#navHeadline').textContent='Jetzt losfahren';q('#navMessage').textContent='Deine späteste Abfahrzeit ist erreicht oder überschritten.';status.classList.add('late');triggerDepartureAlert(a)}else if(until<=60){q('#navHeadline').textContent='Abfahrt in '+until+' Minuten';q('#navMessage').textContent='Für '+a.customer+' solltest du spätestens um '+formatClock(leave)+' Uhr losfahren.';status.classList.add('alert')}else{q('#navHeadline').textContent='Noch '+until+' Minuten bis zur Abfahrt';q('#navMessage').textContent='Geplante Abfahrt spätestens um '+formatClock(leave)+' Uhr.'}}
   function showNavigation(){q('#homeView').classList.add('hidden');clearViews();q('#navigationView').classList.add('active');renderNavigation()}
   function showHome(){clearViews();q('#homeView').classList.remove('hidden');q('#navHome').classList.add('active');renderHomeAppointments();updateCountdown()}
   function findConflict(item){const start=minutes(item.time);const end=start+Number(item.duration||60);for(const a of appointments.filter(x=>x.date===item.date&&String(x.id)!==String(item.id))){const s=minutes(a.time),e=s+Number(a.duration||60);if(start<e&&end>s)return a}return null}
@@ -420,29 +490,54 @@
   let dialogIndex=0;
   let dialogData={date:'',time:'',customer:'',address:'',job:'',duration:''};
   let addressConfirmed=false;
+  const settingsKey='karsakTerminplanerSettingsV1';
+  let appSettings=loadSettings();
   let preferredVoice=null;
+  function loadSettings(){try{return Object.assign({brightness:100,contrast:false,fontSize:100,volume:100,voiceGender:'female',voiceName:'',alarmEnabled:true,alarmVolume:100,alarmTone:'double'},JSON.parse(localStorage.getItem(settingsKey)||'{}'))}catch(e){return {brightness:100,contrast:false,fontSize:100,volume:100,voiceGender:'female',voiceName:'',alarmEnabled:true,alarmVolume:100,alarmTone:'double'}}}
+  function persistSettings(){try{localStorage.setItem(settingsKey,JSON.stringify(appSettings))}catch(e){}}
+  function applySettings(){root.style.filter='brightness('+(appSettings.brightness/100)+')';root.style.fontSize=(appSettings.fontSize/100)+'em';q('#brightnessRange').value=appSettings.brightness;q('#brightnessValue').textContent=appSettings.brightness+' %';q('#contrastToggle').checked=!!appSettings.contrast;q('#fontSizeRange').value=appSettings.fontSize;q('#fontSizeValue').textContent=appSettings.fontSize+' %';q('#volumeRange').value=appSettings.volume;q('#volumeValue').textContent=appSettings.volume+' %';q('#voiceGender').value=appSettings.voiceGender||'female';q('#alarmToggle').checked=!!appSettings.alarmEnabled;q('#alarmVolumeRange').value=appSettings.alarmVolume;q('#alarmVolumeValue').textContent=appSettings.alarmVolume+' %';q('#alarmTone').value=appSettings.alarmTone||'double';qa('.action,.voice-hero,.appointment').forEach(el=>{el.style.filter=appSettings.contrast?'contrast(1.15) brightness(1.08)':''})}
+  function populateVoiceSelect(){if(!('speechSynthesis' in window))return;const select=q('#voiceSelect');const voices=window.speechSynthesis.getVoices().filter(v=>/^de(-|_)/i.test(v.lang)||/german|deutsch/i.test(v.name));select.innerHTML='<option value="">Automatisch auswählen</option>'+voices.map(v=>'<option value="'+v.name.replace(/"/g,'&quot;')+'">'+v.name+' · '+v.lang+'</option>').join('');select.value=appSettings.voiceName||''}
   function choosePreferredVoice(){
     if(!('speechSynthesis' in window))return null;
     const voices=window.speechSynthesis.getVoices();
     if(!voices.length)return null;
     const de=voices.filter(v=>/^de(-|_)/i.test(v.lang)||/german|deutsch/i.test(v.name));
     const femaleHints=['female','frau','katja','petra','anna','amelie','vicki','sandy','helena','marlene','hedda','google deutsch'];
-    preferredVoice=de.find(v=>femaleHints.some(h=>v.name.toLowerCase().includes(h)))||de.find(v=>/natural|neural|premium|enhanced/i.test(v.name))||de[0]||voices[0]||null;
+    const maleHints=['male','mann','hans','markus','stefan','conrad','bernd','klaus','daniel'];
+    preferredVoice=(appSettings.voiceName&&de.find(v=>v.name===appSettings.voiceName))||(appSettings.voiceGender==='male'?de.find(v=>maleHints.some(h=>v.name.toLowerCase().includes(h))):appSettings.voiceGender==='female'?de.find(v=>femaleHints.some(h=>v.name.toLowerCase().includes(h))):null)||de.find(v=>/natural|neural|premium|enhanced/i.test(v.name))||de[0]||voices[0]||null;
     return preferredVoice;
   }
   if('speechSynthesis' in window){
     choosePreferredVoice();
-    window.speechSynthesis.onvoiceschanged=choosePreferredVoice;
+    populateVoiceSelect();
+    window.speechSynthesis.onvoiceschanged=()=>{choosePreferredVoice();populateVoiceSelect()};
   }
   function speakQuestion(text){
     if(!('speechSynthesis' in window))return;
     window.speechSynthesis.cancel();
     const u=new SpeechSynthesisUtterance(text);
-    u.lang='de-DE';u.rate=.92;u.pitch=1.06;u.volume=1;
+    u.lang='de-DE';u.rate=.92;u.pitch=appSettings.voiceGender==='male'?.94:1.06;u.volume=appSettings.volume/100;
     const voice=preferredVoice||choosePreferredVoice();
     if(voice)u.voice=voice;
     window.speechSynthesis.speak(u);
   }
+  let lastDepartureAlertKey='';
+  function playAlarm(){
+    if(!appSettings.alarmEnabled||appSettings.alarmVolume<=0)return;
+    const AudioCtx=window.AudioContext||window.webkitAudioContext;if(!AudioCtx)return;
+    const ctx=new AudioCtx();const gain=ctx.createGain();gain.gain.value=(appSettings.alarmVolume/100)*.18;gain.connect(ctx.destination);
+    const tone=appSettings.alarmTone||'double';const pattern=tone==='triple'?[0,.28,.56]:tone==='soft'?[0]:[0,.36];
+    pattern.forEach((offset,i)=>{const osc=ctx.createOscillator();osc.type=tone==='soft'?'sine':'triangle';osc.frequency.value=tone==='soft'?660:(i%2?880:740);osc.connect(gain);osc.start(ctx.currentTime+offset);osc.stop(ctx.currentTime+offset+(tone==='soft'?.45:.18))});
+    setTimeout(()=>ctx.close(),1400);
+  }
+  function triggerDepartureAlert(a){
+    const key=a.id+'-'+dateKey(new Date())+'-'+a.time;
+    if(lastDepartureAlertKey===key)return;
+    lastDepartureAlertKey=key;
+    playAlarm();
+    speakQuestion('Achtung Herr Kasak. Bitte jetzt losfahren zu '+a.customer+', damit du nicht zu spät kommst.');
+  }
+  function greetingText(){const h=new Date().getHours();return h<11?'Guten Morgen':h<18?'Guten Tag':'Guten Abend'}
   function speakThenListen(text){
     if(!('speechSynthesis' in window)){
       setTimeout(startListening,250);
@@ -450,7 +545,7 @@
     }
     window.speechSynthesis.cancel();
     const u=new SpeechSynthesisUtterance(text);
-    u.lang='de-DE';u.rate=.92;u.pitch=1.06;u.volume=1;
+    u.lang='de-DE';u.rate=.92;u.pitch=appSettings.voiceGender==='male'?.94:1.06;u.volume=appSettings.volume/100;
     const voice=preferredVoice||choosePreferredVoice();
     if(voice)u.voice=voice;
     u.onend=()=>setTimeout(startListening,250);
@@ -521,7 +616,10 @@
       speakQuestion('Termin vollständig. Bitte prüfe die Angaben und bestätige den Termin.');
     }
   }
-  function resetDialog(){dialogIndex=0;dialogData={date:'',time:'',customer:'',address:'',job:'',duration:''};addressConfirmed=false;q('#addressCheck').classList.remove('show');q('#voiceParse').textContent='Antwort übernehmen';renderDialog()}
+  let assistantMode='menu';
+  function saveQuickNote(text){const notesKey='karsakTerminplanerNotesV1';let notes=[];try{notes=JSON.parse(localStorage.getItem(notesKey)||'[]');if(!Array.isArray(notes))notes=[]}catch(e){notes=[]}notes.unshift({id:Date.now(),createdAt:new Date().toISOString(),text});try{localStorage.setItem(notesKey,JSON.stringify(notes))}catch(e){}q('#assistantQuestion').textContent='✓ Notiz gespeichert';q('#assistantStep').textContent='Die Notiz wurde gespeichert.';q('#voiceResult').innerHTML='<div class="dialog-row"><span>Notiz</span><b>'+text+'</b></div>';speakQuestion('Notiz gespeichert.');}
+  function startAppointmentDialog(){assistantMode='appointment';dialogIndex=0;dialogData={date:'',time:'',customer:'',address:'',job:'',duration:''};addressConfirmed=false;q('#addressCheck').classList.remove('show');q('#voiceParse').textContent='Antwort übernehmen';q('#assistantQuestion').textContent=dialogSteps[0].question;q('#assistantStep').textContent='Schritt 1 von '+dialogSteps.length+' · '+dialogSteps[0].hint;q('#voiceInput').placeholder=dialogSteps[0].hint;q('#voiceInput').value='';q('#voiceResult').innerHTML='Termin wird jetzt Schritt für Schritt erfasst.';speakThenListen(dialogSteps[0].question)}
+  function resetDialog(){assistantMode='menu';dialogIndex=0;dialogData={date:'',time:'',customer:'',address:'',job:'',duration:''};addressConfirmed=false;q('#addressCheck').classList.remove('show');q('#voiceParse').textContent='Antwort übernehmen';const greeting=greetingText()+', Herr Kasak. Wie darf ich Ihnen helfen? Sagen Sie zum Beispiel Termin eintragen oder Notiz.';q('#assistantQuestion').textContent='Wie darf ich Ihnen helfen?';q('#assistantStep').textContent='Sagen Sie „Termin eintragen“ oder „Notiz“.';q('#voiceInput').placeholder='z. B. Termin eintragen oder Notiz';q('#voiceInput').value='';q('#voiceResult').innerHTML='Bereit für Ihre Auswahl.';speakThenListen(greeting)}
   function resolveDialogDate(value){const v=(value||'').toLowerCase().trim();const d=new Date();if(v.includes('übermorgen'))d.setDate(d.getDate()+2);else if(v.includes('morgen'))d.setDate(d.getDate()+1);else if(!v.includes('heute')){const names=['sonntag','montag','dienstag','mittwoch','donnerstag','freitag','samstag'];const target=names.findIndex(n=>v.includes(n));if(target>=0){let diff=(target-d.getDay()+7)%7;if(diff===0)diff=7;d.setDate(d.getDate()+diff)}}return dateKey(d)}
   function resolveDialogTime(value){const m=(value||'').match(/(\d{1,2})(?:\s*uhr)?(?:\s*(\d{1,2}))?/i);if(!m)return '';return String(Math.min(23,Number(m[1]))).padStart(2,'0')+':'+String(Math.min(59,Number(m[2]||0))).padStart(2,'0')}
   function resolveDuration(value){const v=(value||'').toLowerCase().trim();if(v.includes('anderthalb')||v.includes('eineinhalb'))return 90;if(v.includes('zweieinhalb'))return 150;if(v.includes('halbe stunde'))return 30;const h=v.match(/(\d+(?:[,.]\d+)?)\s*(?:stunde|stunden|std)/);const min=v.match(/(\d+)\s*(?:minute|minuten|min)/);if(h)return Math.max(15,Math.round(Number(h[1].replace(',','.'))*60)+(min?Number(min[1]):0));if(min)return Math.max(15,Number(min[1]));return 60}
@@ -543,8 +641,22 @@
   function renderWeek(){const end=addDays(weekStart,6);q('#weekRange').textContent=weekStart.toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit'})+' – '+end.toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit',year:'numeric'});const names=['Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag','Sonntag'];const wrap=q('#weekDays');wrap.innerHTML='';for(let i=0;i<7;i++){const d=addDays(weekStart,i),events=appointments.filter(a=>a.date===dateKey(d)).sort((a,b)=>a.time.localeCompare(b.time));const card=document.createElement('section');card.className='day';const head=document.createElement('div');head.className='day-head';head.innerHTML='<div><div class="day-title">'+names[i]+'</div><div class="day-date">'+d.toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit',year:'numeric'})+'</div></div><span class="badge '+(events.length?'busy':'')+'">'+(events.length?(events.length+' Termin'+(events.length>1?'e':'')):'Frei')+'</span>';const body=document.createElement('div');body.className='day-body';if(!events.length){body.innerHTML='<div class="empty">Keine Termine eingetragen</div>'}else{events.forEach(ev=>{const row=document.createElement('div');row.className='week-event';row.style.cursor='pointer';row.setAttribute('role','button');row.setAttribute('tabindex','0');row.setAttribute('aria-label','Termin '+ev.time+' '+ev.customer+' bearbeiten');row.innerHTML='<div><b>'+ev.time+'</b></div><div class="bar"></div><div><b>'+ev.customer+'</b><span>'+ev.job+' · '+ev.address+'</span></div>';row.addEventListener('click',()=>editAppointment(ev.id));row.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();editAppointment(ev.id)}});body.appendChild(row)})}card.append(head,body);wrap.appendChild(card)}}
   const onTap=(selector,handler)=>{const el=q(selector);if(!el)return;el.addEventListener('click',handler);el.addEventListener('pointerup',e=>{if(e.pointerType==='touch'){e.preventDefault();handler(e)}})};
   q('#manualDate').addEventListener('change',previewManualConflict);q('#manualTime').addEventListener('change',previewManualConflict);q('#manualDuration').addEventListener('input',previewManualConflict);
-  onTap('#openWeek',showWeek);onTap('#openManual',showManual);onTap('#navManual',showManual);onTap('#manualBack',showHome);onTap('#manualSave',saveManual);onTap('#manualDelete',deleteAppointment);onTap('#manualMap',()=>openMap(q('#manualAddress').value.trim()));onTap('#openNavigation',showNavigation);onTap('#navNavigation',showNavigation);onTap('#navigationBack',showHome);onTap('#refreshTraffic',renderNavigation);onTap('#startRoute',()=>{const a=nextAppointment();if(a)openMap(a.address)});onTap('#openVoice',()=>{showVoice();resetDialog()});onTap('#startVoiceNow',()=>{showVoice();resetDialog()});onTap('#voiceBack',showHome);onTap('#voiceClear',resetDialog);onTap('#voiceMic',startListening);onTap('#voiceParse',()=>{if(dialogIndex>=dialogSteps.length){const item={id:Date.now(),date:resolveDialogDate(dialogData.date),time:resolveDialogTime(dialogData.time),duration:resolveDuration(dialogData.duration),customer:dialogData.customer,address:dialogData.address,job:dialogData.job,notes:''};if(!item.time){q('#assistantQuestion').textContent='Uhrzeit nicht erkannt';q('#assistantStep').textContent='Bitte Termin neu starten und die Uhrzeit z. B. als „8 Uhr 30“ angeben.';return}const conflict=findConflict(item);if(conflict){q('#assistantQuestion').textContent='⚠ Termin überschneidet sich';q('#assistantStep').textContent='Bereits belegt: '+conflict.time+' · '+conflict.customer;speakQuestion('Der Termin überschneidet sich mit einem bestehenden Termin.');return}appointments.push(item);persistAppointments();q('#assistantQuestion').textContent='✓ Termin gespeichert';q('#assistantStep').textContent='Der Termin wurde dauerhaft in den Kalender übernommen.';q('#voiceParse').textContent='Gespeichert';speakQuestion('Termin gespeichert.');renderHomeAppointments();return}const answer=q('#voiceInput').value.trim();if(!answer){q('#voiceInput').focus();return}const step=dialogSteps[dialogIndex];if(step.key==='address'){dialogData.address=answer;addressConfirmed=false;q('#addressCheckText').textContent=answer;q('#addressCheck').classList.add('show');q('#assistantQuestion').textContent='Bitte prüfe, ob diese Adresse wirklich stimmt.';q('#assistantStep').textContent='Navigation öffnen und anschließend bestätigen.';speakQuestion('Bitte prüfe die Adresse in der Navigation und bestätige sie anschließend.');return}dialogData[step.key]=answer;dialogIndex++;renderDialog()});onTap('#openAddressMap',()=>openMap(dialogData.address));onTap('#confirmAddress',()=>{if(!dialogData.address)return;addressConfirmed=true;q('#addressCheck').classList.remove('show');dialogIndex++;renderDialog()});q('#voiceInput').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();q('#voiceParse').click()}});onTap('#navWeek',()=>q('#weekView').classList.contains('active')?showHome():showWeek());onTap('#navHome',showHome);onTap('#backBtn',showHome);onTap('#prevWeek',()=>{weekStart=addDays(weekStart,-7);renderWeek()});onTap('#nextWeek',()=>{weekStart=addDays(weekStart,7);renderWeek()});onTap('#thisWeek',()=>{weekStart=getMonday(now);renderWeek()});
+  onTap('#openWeek',showWeek);onTap('#openManual',showManual);onTap('#navManual',showManual);onTap('#manualBack',showHome);onTap('#manualSave',saveManual);onTap('#manualDelete',deleteAppointment);onTap('#manualMap',()=>openMap(q('#manualAddress').value.trim()));onTap('#openNavigation',showNavigation);onTap('#navNavigation',showNavigation);onTap('#navigationBack',showHome);onTap('#refreshTraffic',renderNavigation);onTap('#startRoute',()=>{const a=nextAppointment();if(a)openMap(a.address)});onTap('#openVoice',()=>{showVoice();resetDialog()});onTap('#startVoiceNow',()=>{showVoice();resetDialog()});onTap('#voiceBack',showHome);onTap('#voiceClear',resetDialog);onTap('#voiceMic',startListening);onTap('#voiceParse',()=>{const answer=q('#voiceInput').value.trim();if(assistantMode==='menu'){if(!answer){q('#voiceInput').focus();return}const lower=answer.toLowerCase();if(lower.includes('termin')){startAppointmentDialog();return}if(lower.includes('notiz')){assistantMode='note';q('#assistantQuestion').textContent='Welche Notiz soll ich speichern?';q('#assistantStep').textContent='Sprechen Sie die Notiz jetzt ein.';q('#voiceInput').value='';q('#voiceInput').placeholder='Notiz sprechen oder eingeben';q('#voiceResult').innerHTML='Notizmodus aktiv.';speakThenListen('Welche Notiz soll ich speichern?');return}q('#assistantQuestion').textContent='Das habe ich nicht verstanden.';q('#assistantStep').textContent='Bitte sagen Sie „Termin eintragen“ oder „Notiz“.';speakThenListen('Bitte sagen Sie Termin eintragen oder Notiz.');return}if(assistantMode==='note'){if(!answer){q('#voiceInput').focus();return}saveQuickNote(answer);assistantMode='menu';return}if(dialogIndex>=dialogSteps.length){const item={id:Date.now(),date:resolveDialogDate(dialogData.date),time:resolveDialogTime(dialogData.time),duration:resolveDuration(dialogData.duration),customer:dialogData.customer,address:dialogData.address,job:dialogData.job,notes:''};if(!item.time){q('#assistantQuestion').textContent='Uhrzeit nicht erkannt';q('#assistantStep').textContent='Bitte Termin neu starten und die Uhrzeit z. B. als „8 Uhr 30“ angeben.';return}const conflict=findConflict(item);if(conflict){q('#assistantQuestion').textContent='⚠ Termin überschneidet sich';q('#assistantStep').textContent='Bereits belegt: '+conflict.time+' · '+conflict.customer;speakQuestion('Der Termin überschneidet sich mit einem bestehenden Termin.');return}appointments.push(item);persistAppointments();q('#assistantQuestion').textContent='✓ Termin gespeichert';q('#assistantStep').textContent='Der Termin wurde dauerhaft in den Kalender übernommen.';q('#voiceParse').textContent='Gespeichert';speakQuestion('Termin gespeichert.');renderHomeAppointments();assistantMode='menu';return}if(!answer){q('#voiceInput').focus();return}const step=dialogSteps[dialogIndex];if(step.key==='address'){dialogData.address=answer;addressConfirmed=false;q('#addressCheckText').textContent=answer;q('#addressCheck').classList.add('show');q('#assistantQuestion').textContent='Bitte prüfe, ob diese Adresse wirklich stimmt.';q('#assistantStep').textContent='Navigation öffnen und anschließend bestätigen.';speakQuestion('Bitte prüfe die Adresse in der Navigation und bestätige sie anschließend.');return}dialogData[step.key]=answer;dialogIndex++;renderDialog()});onTap('#openAddressMap',()=>openMap(dialogData.address));onTap('#confirmAddress',()=>{if(!dialogData.address)return;addressConfirmed=true;q('#addressCheck').classList.remove('show');dialogIndex++;renderDialog()});q('#voiceInput').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();q('#voiceParse').click()}});onTap('#navWeek',()=>q('#weekView').classList.contains('active')?showHome():showWeek());onTap('#navHome',showHome);onTap('#backBtn',showHome);onTap('#prevWeek',()=>{weekStart=addDays(weekStart,-7);renderWeek()});onTap('#nextWeek',()=>{weekStart=addDays(weekStart,7);renderWeek()});onTap('#thisWeek',()=>{weekStart=getMonday(now);renderWeek()});
   onTap('#voiceHero',()=>{showVoice();resetDialog()});
+  onTap('#openSettings',()=>{q('#homeView').classList.add('hidden');clearViews();q('#settingsView').classList.add('active');applySettings();populateVoiceSelect()});
+  onTap('#settingsBack',()=>{q('#settingsView').classList.remove('active');showHome()});
+  q('#brightnessRange').addEventListener('input',e=>{appSettings.brightness=Number(e.target.value);applySettings();persistSettings()});
+  q('#contrastToggle').addEventListener('change',e=>{appSettings.contrast=e.target.checked;applySettings();persistSettings()});
+  q('#fontSizeRange').addEventListener('input',e=>{appSettings.fontSize=Number(e.target.value);applySettings();persistSettings()});
+  q('#volumeRange').addEventListener('input',e=>{appSettings.volume=Number(e.target.value);applySettings();persistSettings()});
+  q('#voiceGender').addEventListener('change',e=>{appSettings.voiceGender=e.target.value;appSettings.voiceName='';q('#voiceSelect').value='';choosePreferredVoice();persistSettings()});
+  q('#voiceSelect').addEventListener('change',e=>{appSettings.voiceName=e.target.value;choosePreferredVoice();persistSettings()});
+  q('#alarmToggle').addEventListener('change',e=>{appSettings.alarmEnabled=e.target.checked;persistSettings()});
+  q('#alarmVolumeRange').addEventListener('input',e=>{appSettings.alarmVolume=Number(e.target.value);q('#alarmVolumeValue').textContent=appSettings.alarmVolume+' %';persistSettings()});
+  q('#alarmTone').addEventListener('change',e=>{appSettings.alarmTone=e.target.value;persistSettings()});
+  onTap('#testVoice',()=>speakQuestion('Hallo. Das ist die ausgewählte Stimme für deinen Terminplaner.'));
+  onTap('#testAlarm',playAlarm);
+  applySettings();
   renderHomeAppointments();
   updateCountdown();
   setInterval(updateCountdown,30000);
