@@ -488,16 +488,16 @@
     box.classList.remove('overdue');warning.classList.remove('show');
     if(!next){q('#countdownName').textContent='Heute keine weiteren Termine';q('#countdownTime').textContent='Fertig';box.classList.remove('alert');return}
     const diff=Math.max(0,next.target-current);
-    const minutes=Math.floor(diff/60000);
-    const hours=Math.floor(minutes/60);
-    const mins=minutes%60;
+    const remainingMinutes=Math.floor(diff/60000);
+    const hours=Math.floor(remainingMinutes/60);
+    const mins=remainingMinutes%60;
     const drive=30+simulatedTrafficDelay();
     const buffer=15;
     const leaveMinutes=minutes(next.time)-drive-buffer;
     const leaveTime=formatClock(leaveMinutes);
     q('#countdownName').innerHTML=next.name+' · '+next.time+(next.address?'<span class="where">📍 '+next.address+'</span>':'')+'<span class="drive">🚗 Fahrzeit ab aktuellem Standort: ca. '+drive+' Min</span><span class="drive">⏰ Späteste Abfahrt: ca. '+leaveTime+' Uhr</span>';
     q('#countdownTime').textContent=(hours?hours+' Std ':'')+String(mins).padStart(2,'0')+' Min';
-    box.classList.toggle('alert',minutes<=60);
+    box.classList.toggle('alert',remainingMinutes<=60);
   }
   function getMonday(d){const x=new Date(d);const day=x.getDay()||7;x.setDate(x.getDate()-day+1);x.setHours(12,0,0,0);return x}
   function addDays(d,n){const x=new Date(d);x.setDate(x.getDate()+n);return x}
