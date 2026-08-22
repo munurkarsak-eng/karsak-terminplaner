@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
-<meta name="theme-color" content="#176b3a">
+<meta name="theme-color" content="#07131d">
 <title>Dachdecker Karsak – Terminplaner</title>
 
 <style>
@@ -11,105 +11,120 @@
 body{
   margin:0;
   font-family:Arial,sans-serif;
-  background:#f3f5f4;
-  color:#17211b;
-  padding-bottom:85px
+  background:#07131d;
+  color:#fff;
+  padding-bottom:80px
 }
 header{
-  background:#176b3a;
-  color:white;
-  padding:18px;
-  text-align:center
+  text-align:center;
+  padding:22px 15px;
+  background:#07131d;
+  border-bottom:1px solid #263746
 }
-header h1{margin:0;font-size:25px}
-header p{margin:5px 0 0;font-size:14px}
-.screen{display:none;padding:15px;max-width:800px;margin:auto}
+header h1{margin:0;font-size:26px}
+header .gold{color:#f5b82e}
+.screen{display:none;padding:16px;max-width:760px;margin:auto}
 .screen.active{display:block}
 .card{
-  background:white;
-  border-radius:16px;
-  padding:16px;
-  margin-bottom:14px;
-  box-shadow:0 2px 9px #0002
+  background:#101e2a;
+  border:1px solid #30404f;
+  border-radius:18px;
+  padding:17px;
+  margin-bottom:15px
 }
 h2{margin-top:0}
 label{
   display:block;
   font-weight:bold;
-  margin:12px 0 5px
+  margin:13px 0 6px
 }
-input,textarea,select{
+input,textarea{
   width:100%;
-  font-size:18px;
-  padding:13px;
-  border:1px solid #bbb;
-  border-radius:10px;
-  background:white
+  padding:14px;
+  border-radius:12px;
+  border:1px solid #506070;
+  background:#fff;
+  color:#111;
+  font-size:18px
 }
-textarea{min-height:100px;resize:vertical}
+textarea{min-height:95px}
+.row{display:flex;gap:10px}
+.row>div{flex:1}
 button{
   border:0;
-  border-radius:11px;
-  padding:13px 15px;
+  border-radius:13px;
+  padding:14px;
   font-size:17px;
-  font-weight:bold;
-  cursor:pointer
+  font-weight:bold
 }
-.primary{background:#176b3a;color:white;width:100%;margin-top:14px}
-.secondary{background:#e7ece9;color:#17211b}
-.danger{background:#b3261e;color:white}
+.primary{
+  width:100%;
+  background:#f5b82e;
+  color:#111;
+  margin-top:15px
+}
+.secondary{
+  background:#243340;
+  color:#fff
+}
+.danger{
+  width:100%;
+  background:#9f2727;
+  color:#fff;
+  margin-top:10px
+}
 .big{
   width:100%;
-  min-height:70px;
-  margin:7px 0;
-  background:white;
-  border:2px solid #176b3a;
-  color:#176b3a;
-  font-size:19px
+  background:#101e2a;
+  color:#fff;
+  border:1px solid #30404f;
+  margin-bottom:12px;
+  min-height:70px
 }
-.row{display:flex;gap:9px}
-.row>*{flex:1}
+.voiceButton{
+  width:100%;
+  min-height:85px;
+  font-size:20px;
+  background:#f5b82e;
+  color:#111
+}
 .appointment{
-  border-left:6px solid #176b3a;
-  background:#f6faf7;
-  padding:12px;
-  margin:9px 0;
-  border-radius:8px
+  padding:13px;
+  margin:10px 0;
+  background:#162634;
+  border-left:5px solid #f5b82e;
+  border-radius:10px
 }
-.appointment b{font-size:18px}
-.small{font-size:13px;color:#657069}
-.empty{text-align:center;color:#777;padding:25px}
+.small{font-size:13px;color:#aab6bf}
+.empty{color:#9aa8b3;padding:20px;text-align:center}
+.voiceResult{
+  margin-top:15px;
+  padding:13px;
+  background:#162634;
+  border-radius:10px;
+  line-height:1.5
+}
 .bottom{
   position:fixed;
-  bottom:0;
   left:0;
   right:0;
-  height:72px;
-  background:white;
-  border-top:1px solid #ccc;
+  bottom:0;
+  background:#09141e;
+  border-top:1px solid #30404f;
   display:flex;
-  z-index:10
+  z-index:20
 }
 .bottom button{
   flex:1;
-  background:white;
-  color:#333;
+  background:transparent;
+  color:#fff;
   border-radius:0;
-  padding:5px;
-  font-size:12px
+  font-size:12px;
+  padding:8px 3px
 }
-.bottom button span{display:block;font-size:23px;margin-bottom:2px}
-.voice{
-  background:#176b3a;
-  color:white;
-  width:100%;
-  font-size:19px;
-  min-height:65px
-}
-.back{margin-bottom:12px}
-.today{
-  background:#e7f4eb;
-  border:1px solid #9ac5a6
+.bottom span{
+  display:block;
+  font-size:24px
 }
 </style>
 </head>
@@ -117,34 +132,44 @@ button{
 <body>
 
 <header>
-<h1>🏠 Dachdecker Karsak</h1>
-<p>Terminplaner</p>
+  <div class="gold">⌂ K</div>
+  <h1>DACHDECKER KARSAK</h1>
+  <div class="gold">TERMINPLANER</div>
 </header>
 
 <section id="home" class="screen active">
   <div class="card">
-    <h2>Heute</h2>
+    <h2>Heutige Termine</h2>
     <div id="todayList"></div>
   </div>
 
-  <button class="big" onclick="newAppointment()">➕ Neuer Termin</button>
   <button class="big" onclick="show('calendar')">📅 Kalender</button>
-  <button class="big" onclick="show('voice')">🎤 Spracheingabe</button>
+  <button class="big" onclick="show('voice')">🎤 Termin sprechen</button>
+  <button class="big" onclick="newAppointment()">➕ Neuer Termin</button>
   <button class="big" onclick="show('saved')">📋 Alle Termine</button>
 </section>
 
-<section id="calendar" class="screen">
-  <button class="secondary back" onclick="show('home')">← Zurück</button>
+<section id="voice" class="screen">
+  <button class="secondary" onclick="show('home')">← Zurück</button>
+
   <div class="card">
-    <h2>📅 Kalender</h2>
-    <label>Datum auswählen</label>
-    <input type="date" id="calDate" onchange="renderCalendar()">
-    <div id="calendarList"></div>
+    <h2>🎤 Termin sprechen</h2>
+
+    <p>Sprich möglichst in einem Satz, zum Beispiel:</p>
+    <p class="small">
+      „Morgen um 7:30 Uhr Lange Straße 67 bei Herrn Karsak Dach besichtigen“
+    </p>
+
+    <button class="voiceButton" onclick="startVoice()">🎤 Jetzt sprechen</button>
+
+    <div id="voiceText" class="voiceResult">
+      Noch nichts gesprochen.
+    </div>
   </div>
 </section>
 
 <section id="editor" class="screen">
-  <button class="secondary back" onclick="show('home')">← Zurück</button>
+  <button class="secondary" onclick="show('home')">← Zurück</button>
 
   <div class="card">
     <h2 id="editorTitle">Neuer Termin</h2>
@@ -167,58 +192,74 @@ button{
     <input id="customer" placeholder="z.B. Herr Müller">
 
     <label>Adresse / Baustelle</label>
-    <input id="address" placeholder="Straße, Ort">
+    <input id="address" placeholder="z.B. Lange Straße 67, Wunstorf">
 
     <label>Telefon</label>
-    <input id="phone" type="tel" placeholder="Telefonnummer">
+    <input id="phone" type="tel">
 
     <label>Arbeit / Termin</label>
     <input id="job" placeholder="z.B. Dach besichtigen">
 
     <label>Notizen</label>
-    <textarea id="notes" placeholder="Weitere Informationen"></textarea>
+    <textarea id="notes"></textarea>
 
     <button class="primary" onclick="saveAppointment()">💾 Termin speichern</button>
-    <button id="deleteBtn" class="danger" style="display:none;width:100%;margin-top:10px" onclick="deleteAppointment()">🗑 Termin löschen</button>
+
+    <button id="deleteBtn" class="danger" style="display:none"
+      onclick="deleteAppointment()">🗑 Termin löschen</button>
   </div>
 </section>
 
-<section id="voice" class="screen">
-  <button class="secondary back" onclick="show('home')">← Zurück</button>
+<section id="calendar" class="screen">
+  <button class="secondary" onclick="show('home')">← Zurück</button>
+
   <div class="card">
-    <h2>🎤 Spracheingabe</h2>
-    <p>Tippe auf den Knopf und sprich deinen Termin.</p>
-    <p class="small">Beispiel: „Morgen um 10 Uhr Herr Müller Dach besichtigen“</p>
-    <button class="voice" onclick="startVoice()">🎤 Jetzt sprechen</button>
-    <div id="voiceText" style="margin-top:15px"></div>
+    <h2>📅 Kalender</h2>
+    <input type="date" id="calDate" onchange="renderCalendar()">
+    <div id="calendarList"></div>
   </div>
 </section>
 
 <section id="saved" class="screen">
-  <button class="secondary back" onclick="show('home')">← Zurück</button>
+  <button class="secondary" onclick="show('home')">← Zurück</button>
+
   <div class="card">
-    <h2>📋 Alle Termine</h2>
+    <h2>Alle Termine</h2>
     <div id="allList"></div>
   </div>
 </section>
 
 <div class="bottom">
-  <button onclick="show('home')"><span>🏠</span>Heute</button>
+  <button onclick="show('home')"><span>🏠</span>Start</button>
   <button onclick="show('calendar')"><span>📅</span>Kalender</button>
   <button onclick="newAppointment()"><span>➕</span>Termin</button>
   <button onclick="show('voice')"><span>🎤</span>Sprache</button>
 </div>
 
 <script>
-const KEY="karsakAppointmentsV2";
+const KEY="karsakAppointmentsV3";
+
 let appointments=JSON.parse(localStorage.getItem(KEY)||"[]");
 let editingId=null;
 
+function el(id){
+  return document.getElementById(id);
+}
+
 function iso(d=new Date()){
-  let y=d.getFullYear();
-  let m=String(d.getMonth()+1).padStart(2,"0");
-  let day=String(d.getDate()).padStart(2,"0");
+  const y=d.getFullYear();
+  const m=String(d.getMonth()+1).padStart(2,"0");
+  const day=String(d.getDate()).padStart(2,"0");
   return `${y}-${m}-${day}`;
+}
+
+function addMinutes(time,minutes){
+  if(!time)return "";
+  const [h,m]=time.split(":").map(Number);
+  const total=h*60+m+minutes;
+  const hh=String(Math.floor(total/60)%24).padStart(2,"0");
+  const mm=String(total%60).padStart(2,"0");
+  return `${hh}:${mm}`;
 }
 
 function esc(s){
@@ -230,40 +271,40 @@ function esc(s){
 
 function show(id){
   document.querySelectorAll(".screen").forEach(x=>x.classList.remove("active"));
-  document.getElementById(id).classList.add("active");
+  el(id).classList.add("active");
 
-  if(id==="home") renderToday();
-  if(id==="calendar") renderCalendar();
-  if(id==="saved") renderAll();
+  if(id==="home")renderToday();
+  if(id==="calendar")renderCalendar();
+  if(id==="saved")renderAll();
 
   window.scrollTo(0,0);
 }
 
-function sorted(items){
-  return [...items].sort((a,b)=>
-    (a.date+" "+a.start).localeCompare(b.date+" "+b.start)
-  );
-}
-
 function appointmentHTML(a){
   return `
-    <div class="appointment" onclick="editAppointment('${a.id}')">
-      <b>${esc(a.start||"")} ${esc(a.customer)}</b><br>
-      ${a.end ? esc(a.start)+" – "+esc(a.end)+" Uhr<br>" : ""}
-      ${a.job ? "🔨 "+esc(a.job)+"<br>" : ""}
-      ${a.address ? "📍 "+esc(a.address)+"<br>" : ""}
-      ${a.phone ? "📞 "+esc(a.phone)+"<br>" : ""}
-      ${a.notes ? "<span class='small'>"+esc(a.notes)+"</span>" : ""}
-    </div>`;
+  <div class="appointment" onclick="editAppointment('${a.id}')">
+    <b>${esc(a.start)} ${esc(a.customer)}</b><br>
+    ${a.end ? esc(a.start)+" – "+esc(a.end)+" Uhr<br>" : ""}
+    ${a.address ? "📍 "+esc(a.address)+"<br>" : ""}
+    ${a.job ? "🔨 "+esc(a.job)+"<br>" : ""}
+    ${a.phone ? "📞 "+esc(a.phone)+"<br>" : ""}
+    ${a.notes ? "<span class='small'>"+esc(a.notes)+"</span>" : ""}
+  </div>`;
 }
 
 function list(items,target){
-  const box=document.getElementById(target);
+  const box=el(target);
+
   if(!items.length){
-    box.innerHTML="<div class='empty'>Keine Termine vorhanden</div>";
+    box.innerHTML="<div class='empty'>Keine Termine eingetragen.</div>";
     return;
   }
-  box.innerHTML=sorted(items).map(appointmentHTML).join("");
+
+  items=[...items].sort((a,b)=>
+    (a.date+" "+a.start).localeCompare(b.date+" "+b.start)
+  );
+
+  box.innerHTML=items.map(appointmentHTML).join("");
 }
 
 function renderToday(){
@@ -271,9 +312,9 @@ function renderToday(){
 }
 
 function renderCalendar(){
-  let d=document.getElementById("calDate").value || iso();
-  document.getElementById("calDate").value=d;
-  list(appointments.filter(a=>a.date===d),"calendarList");
+  const date=el("calDate").value||iso();
+  el("calDate").value=date;
+  list(appointments.filter(a=>a.date===date),"calendarList");
 }
 
 function renderAll(){
@@ -282,17 +323,18 @@ function renderAll(){
 
 function newAppointment(){
   editingId=null;
-  document.getElementById("editorTitle").textContent="Neuer Termin";
-  document.getElementById("deleteBtn").style.display="none";
 
-  document.getElementById("date").value=iso();
-  document.getElementById("start").value="";
-  document.getElementById("end").value="";
-  document.getElementById("customer").value="";
-  document.getElementById("address").value="";
-  document.getElementById("phone").value="";
-  document.getElementById("job").value="";
-  document.getElementById("notes").value="";
+  el("editorTitle").textContent="Neuer Termin";
+  el("deleteBtn").style.display="none";
+
+  el("date").value=iso();
+  el("start").value="";
+  el("end").value="";
+  el("customer").value="";
+  el("address").value="";
+  el("phone").value="";
+  el("job").value="";
+  el("notes").value="";
 
   show("editor");
 }
@@ -302,36 +344,37 @@ function editAppointment(id){
   if(!a)return;
 
   editingId=id;
-  document.getElementById("editorTitle").textContent="Termin bearbeiten";
-  document.getElementById("deleteBtn").style.display="block";
 
-  document.getElementById("date").value=a.date||"";
-  document.getElementById("start").value=a.start||"";
-  document.getElementById("end").value=a.end||"";
-  document.getElementById("customer").value=a.customer||"";
-  document.getElementById("address").value=a.address||"";
-  document.getElementById("phone").value=a.phone||"";
-  document.getElementById("job").value=a.job||"";
-  document.getElementById("notes").value=a.notes||"";
+  el("editorTitle").textContent="Termin bearbeiten";
+  el("deleteBtn").style.display="block";
+
+  el("date").value=a.date||"";
+  el("start").value=a.start||"";
+  el("end").value=a.end||"";
+  el("customer").value=a.customer||"";
+  el("address").value=a.address||"";
+  el("phone").value=a.phone||"";
+  el("job").value=a.job||"";
+  el("notes").value=a.notes||"";
 
   show("editor");
 }
 
 function saveAppointment(){
   const a={
-    id:editingId || String(Date.now()),
-    date:document.getElementById("date").value,
-    start:document.getElementById("start").value,
-    end:document.getElementById("end").value,
-    customer:document.getElementById("customer").value.trim(),
-    address:document.getElementById("address").value.trim(),
-    phone:document.getElementById("phone").value.trim(),
-    job:document.getElementById("job").value.trim(),
-    notes:document.getElementById("notes").value.trim()
+    id:editingId||String(Date.now()),
+    date:el("date").value,
+    start:el("start").value,
+    end:el("end").value,
+    customer:el("customer").value.trim(),
+    address:el("address").value.trim(),
+    phone:el("phone").value.trim(),
+    job:el("job").value.trim(),
+    notes:el("notes").value.trim()
   };
 
-  if(!a.date || !a.start || !a.customer){
-    alert("Bitte Datum, Uhrzeit und Kunde eintragen.");
+  if(!a.date||!a.start||!a.customer){
+    alert("Bitte Datum, Uhrzeit und Kunde kontrollieren.");
     return;
   }
 
@@ -342,6 +385,7 @@ function saveAppointment(){
   }
 
   localStorage.setItem(KEY,JSON.stringify(appointments));
+
   editingId=null;
   alert("Termin gespeichert.");
   show("home");
@@ -349,47 +393,254 @@ function saveAppointment(){
 
 function deleteAppointment(){
   if(!editingId)return;
-  if(!confirm("Diesen Termin wirklich löschen?"))return;
 
-  appointments=appointments.filter(x=>x.id!==editingId);
+  if(!confirm("Termin wirklich löschen?"))return;
+
+  appointments=appointments.filter(a=>a.id!==editingId);
   localStorage.setItem(KEY,JSON.stringify(appointments));
+
   editingId=null;
   show("home");
 }
 
-function startVoice(){
-  const SpeechRecognition=
-    window.SpeechRecognition || window.webkitSpeechRecognition;
+/* -------------------------
+   SPRACHERKENNUNG
+------------------------- */
 
-  if(!SpeechRecognition){
-    alert("Die Spracheingabe wird von diesem Browser nicht unterstützt.");
+function startVoice(){
+  const Recognition=
+    window.SpeechRecognition||
+    window.webkitSpeechRecognition;
+
+  if(!Recognition){
+    alert("Bitte Chrome verwenden. Spracheingabe wird hier nicht unterstützt.");
     return;
   }
 
-  const r=new SpeechRecognition();
+  const r=new Recognition();
+
   r.lang="de-DE";
   r.interimResults=false;
+  r.continuous=false;
 
-  document.getElementById("voiceText").innerHTML="<b>Ich höre zu …</b>";
+  el("voiceText").innerHTML="<b>🎤 Ich höre zu…</b>";
 
-  r.onresult=function(e){
-    const text=e.results[0][0].transcript;
-    document.getElementById("voiceText").innerHTML=
-      "<b>Erkannt:</b><br>"+esc(text);
+  r.onresult=function(event){
+    const spoken=event.results[0][0].transcript.trim();
 
-    newAppointment();
-    document.getElementById("notes").value=text;
+    el("voiceText").innerHTML=
+      "<b>Erkannt:</b><br>"+esc(spoken);
+
+    parseVoice(spoken);
   };
 
-  r.onerror=function(){
-    document.getElementById("voiceText").textContent=
-      "Sprache konnte nicht erkannt werden.";
+  r.onerror=function(event){
+    el("voiceText").innerHTML=
+      "Sprache konnte nicht erkannt werden.<br>"+
+      "<span class='small'>Bitte noch einmal langsam sprechen.</span>";
   };
 
   r.start();
 }
 
-document.getElementById("calDate").value=iso();
+/* -------------------------
+   SATZ AUSWERTEN
+------------------------- */
+
+function parseVoice(text){
+
+  const original=text.trim();
+  let work=original.replace(/\s+/g," ").trim();
+  let lower=work.toLowerCase();
+
+  /* DATUM */
+
+  let date=new Date();
+
+  if(/\bübermorgen\b/i.test(work)){
+    date.setDate(date.getDate()+2);
+  }
+  else if(/\bmorgen\b/i.test(work)){
+    date.setDate(date.getDate()+1);
+  }
+  else if(/\bheute\b/i.test(work)){
+  }
+  else{
+    const dateMatch=work.match(
+      /\b(\d{1,2})[.\-/](\d{1,2})(?:[.\-/](\d{2,4}))?\b/
+    );
+
+    if(dateMatch){
+      let day=Number(dateMatch[1]);
+      let month=Number(dateMatch[2])-1;
+      let year=dateMatch[3]
+        ? Number(dateMatch[3])
+        : new Date().getFullYear();
+
+      if(year<100)year+=2000;
+
+      date=new Date(year,month,day);
+    }
+  }
+
+  /* UHRZEIT */
+
+  let start="";
+
+  let timeMatch=work.match(
+    /\b(?:um\s*)?(\d{1,2})(?:(?:[:.])(\d{2})|\s*uhr(?:\s*(\d{1,2}))?)?\b/i
+  );
+
+  if(timeMatch){
+    let h=Number(timeMatch[1]);
+    let m=Number(timeMatch[2]||timeMatch[3]||0);
+
+    if(h<=23 && m<=59){
+      start=
+        String(h).padStart(2,"0")+
+        ":"+
+        String(m).padStart(2,"0");
+    }
+  }
+
+  /* ADRESSE */
+
+  let address="";
+
+  const streetPattern =
+    /((?:[A-ZÄÖÜ][a-zäöüß]+(?:\s+[A-ZÄÖÜ][a-zäöüß]+)*\s*(?:straße|strasse|weg|allee|platz|ring|damm|stieg|gasse|chaussee|ufer|kamp|feld|hof|markt))\s+\d+[a-zA-Z]?)/i;
+
+  const streetMatch=work.match(streetPattern);
+
+  if(streetMatch){
+    address=streetMatch[1]
+      .replace(/\bstrasse\b/i,"Straße")
+      .trim();
+  }
+
+  /* KUNDE */
+
+  let customer="";
+
+  let customerMatch=work.match(
+    /\b(?:bei|mit)\s+(herrn|herr|frau)\s+([A-ZÄÖÜ][A-Za-zÄÖÜäöüß\-]+)/i
+  );
+
+  if(!customerMatch){
+    customerMatch=work.match(
+      /\b(herrn|herr|frau)\s+([A-ZÄÖÜ][A-Za-zÄÖÜäöüß\-]+)/i
+    );
+  }
+
+  if(customerMatch){
+    let title=customerMatch[1].toLowerCase();
+
+    if(title==="herrn"||title==="herr"){
+      title="Herr";
+    }else{
+      title="Frau";
+    }
+
+    customer=title+" "+customerMatch[2];
+  }
+
+  /* ARBEIT / TERMIN */
+
+  let job="";
+
+  const jobs=[
+    "dach besichtigen",
+    "dach ansehen",
+    "dach prüfen",
+    "dach kontrollieren",
+    "angebot besprechen",
+    "angebot erstellen",
+    "baustelle ansehen",
+    "baustelle besichtigen",
+    "reparatur ansehen",
+    "reparatur durchführen",
+    "sturm schaden ansehen",
+    "sturmschaden ansehen",
+    "flachdach ansehen",
+    "steildach ansehen",
+    "aufmaß machen",
+    "aufmaß nehmen",
+    "kundenbesuch",
+    "beratung",
+    "besichtigung"
+  ];
+
+  for(const j of jobs){
+    if(lower.includes(j)){
+      job=j.charAt(0).toUpperCase()+j.slice(1);
+      break;
+    }
+  }
+
+  /* FALLBACK TÄTIGKEIT */
+
+  if(!job && customer){
+    const namePos=lower.indexOf(customer.toLowerCase());
+
+    if(namePos>=0){
+      let remainder=work.substring(namePos+customer.length).trim();
+
+      remainder=remainder
+        .replace(/^[,.\s]+/,"")
+        .trim();
+
+      if(remainder.length>2){
+        job=remainder;
+      }
+    }
+  }
+
+  /* RESTLICHER TEXT ALS NOTIZ */
+
+  let notes=original;
+
+  if(address){
+    notes=notes.replace(
+      new RegExp(address.replace(/[.*+?^${}()|[\]\\]/g,"\\$&"),"i"),
+      ""
+    );
+  }
+
+  if(customer){
+    notes=notes.replace(
+      new RegExp(customer.replace("Herr ","(?:Herr|Herrn) "), "i"),
+      ""
+    );
+  }
+
+  notes=notes
+    .replace(/\b(heute|morgen|übermorgen)\b/ig,"")
+    .replace(/\b(?:um\s*)?\d{1,2}(?:(?:[:.])\d{2}|\s*uhr(?:\s*\d{1,2})?)?\b/ig,"")
+    .replace(/\s+/g," ")
+    .trim();
+
+  /* FELDER FÜLLEN */
+
+  editingId=null;
+
+  el("editorTitle").textContent="Termin prüfen";
+  el("deleteBtn").style.display="none";
+
+  el("date").value=iso(date);
+  el("start").value=start||"08:00";
+  el("end").value=addMinutes(start||"08:00",60);
+
+  el("customer").value=customer;
+  el("address").value=address;
+  el("phone").value="";
+  el("job").value=job;
+
+  el("notes").value=notes;
+
+  show("editor");
+}
+
+el("calDate").value=iso();
 renderToday();
 </script>
 
