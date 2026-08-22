@@ -243,7 +243,7 @@
     </div>
     <section class="voice-card">
       <h2>🎤 Termin-Assistent</h2>
-      <p>Der Assistent fragt dich Schritt für Schritt. Tippe auf „Mikrofon“, sprich deine Antwort und die App übernimmt sie automatisch. Falls dein Browser die Spracheingabe nicht unterstützt, kannst du weiterhin tippen.</p>
+      <p>Der Assistent fragt dich Schritt für Schritt. Nach jeder gesprochenen Frage startet das Mikrofon automatisch. Du antwortest einfach, und die App übernimmt deine Antwort. Der Mikrofon-Knopf bleibt als Notlösung erhalten.</p>
       <div class="assistant-box" aria-live="polite">
         <div class="assistant-label">Termin-Assistent</div>
         <div class="assistant-question" id="assistantQuestion">Für welchen Tag ist der Termin?</div>
@@ -410,11 +410,41 @@
   let dialogIndex=0;
   let dialogData={date:'',time:'',customer:'',address:'',job:'',duration:''};
   let addressConfirmed=false;
+  let preferredVoice=null;
+  function choosePreferredVoice(){
+    if(!('speechSynthesis' in window))return null;
+    const voices=window.speechSynthesis.getVoices();
+    if(!voices.length)return null;
+    const de=voices.filter(v=>/^de(-|_)/i.test(v.lang)||/german|deutsch/i.test(v.name));
+    const femaleHints=['female','frau','katja','petra','anna','amelie','vicki','sandy','helena','marlene','hedda','google deutsch'];
+    preferredVoice=de.find(v=>femaleHints.some(h=>v.name.toLowerCase().includes(h)))||de.find(v=>/natural|neural|premium|enhanced/i.test(v.name))||de[0]||voices[0]||null;
+    return preferredVoice;
+  }
+  if('speechSynthesis' in window){
+    choosePreferredVoice();
+    window.speechSynthesis.onvoiceschanged=choosePreferredVoice;
+  }
   function speakQuestion(text){
     if(!('speechSynthesis' in window))return;
     window.speechSynthesis.cancel();
     const u=new SpeechSynthesisUtterance(text);
-    u.lang='de-DE';u.rate=.95;
+    u.lang='de-DE';u.rate=.92;u.pitch=1.06;u.volume=1;
+    const voice=preferredVoice||choosePreferredVoice();
+    if(voice)u.voice=voice;
+    window.speechSynthesis.speak(u);
+  }
+  function speakThenListen(text){
+    if(!('speechSynthesis' in window)){
+      setTimeout(startListening,250);
+      return;
+    }
+    window.speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance(text);
+    u.lang='de-DE';u.rate=.92;u.pitch=1.06;u.volume=1;
+    const voice=preferredVoice||choosePreferredVoice();
+    if(voice)u.voice=voice;
+    u.onend=()=>setTimeout(startListening,250);
+    u.onerror=()=>setTimeout(startListening,250);
     window.speechSynthesis.speak(u);
   }
   let activeRecognition=null;
@@ -471,7 +501,7 @@
       const rows=dialogSteps.filter(s=>dialogData[s.key]).map(s=>'<div class="dialog-row"><span>'+s.question.replace('?','')+'</span><b>'+dialogData[s.key]+'</b></div>').join('');
       q('#voiceResult').innerHTML=rows||'Noch keine Angaben erfasst.';
       if(step.key!=='address')q('#addressCheck').classList.remove('show');
-      speakQuestion(step.question);
+      speakThenListen(step.question);
     }else{
       q('#assistantQuestion').textContent='Termin vollständig. Soll er so gespeichert werden?';
       q('#assistantStep').textContent='Alle Angaben bitte kurz prüfen.';
@@ -502,8 +532,8 @@
   }
   function renderWeek(){const end=addDays(weekStart,6);q('#weekRange').textContent=weekStart.toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit'})+' – '+end.toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit',year:'numeric'});const names=['Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag','Sonntag'];const wrap=q('#weekDays');wrap.innerHTML='';for(let i=0;i<7;i++){const d=addDays(weekStart,i),events=appointments.filter(a=>a.date===dateKey(d)).sort((a,b)=>a.time.localeCompare(b.time));const card=document.createElement('section');card.className='day';const head=document.createElement('div');head.className='day-head';head.innerHTML='<div><div class="day-title">'+names[i]+'</div><div class="day-date">'+d.toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit',year:'numeric'})+'</div></div><span class="badge '+(events.length?'busy':'')+'">'+(events.length?(events.length+' Termin'+(events.length>1?'e':'')):'Frei')+'</span>';const body=document.createElement('div');body.className='day-body';if(!events.length){body.innerHTML='<div class="empty">Keine Termine eingetragen</div>'}else{events.forEach(ev=>{const row=document.createElement('div');row.className='week-event';row.innerHTML='<div><b>'+ev.time+'</b></div><div class="bar"></div><div><b>'+ev.customer+'</b><span>'+ev.job+' · '+ev.address+'</span></div>';body.appendChild(row)})}card.append(head,body);wrap.appendChild(card)}}
   const onTap=(selector,handler)=>{const el=q(selector);if(!el)return;el.addEventListener('click',handler);el.addEventListener('pointerup',e=>{if(e.pointerType==='touch'){e.preventDefault();handler(e)}})};
-  onTap('#openWeek',showWeek);onTap('#openManual',showManual);onTap('#navManual',showManual);onTap('#manualBack',showHome);onTap('#manualSave',saveManual);onTap('#manualMap',()=>openMap(q('#manualAddress').value.trim()));onTap('#openNavigation',showNavigation);onTap('#navNavigation',showNavigation);onTap('#navigationBack',showHome);onTap('#refreshTraffic',renderNavigation);onTap('#startRoute',()=>{const a=nextAppointment();if(a)openMap(a.address)});onTap('#openVoice',()=>{showVoice();resetDialog()});onTap('#startVoiceNow',()=>{showVoice();resetDialog();setTimeout(startListening,250)});onTap('#voiceBack',showHome);onTap('#voiceClear',resetDialog);onTap('#voiceMic',startListening);onTap('#voiceParse',()=>{if(dialogIndex>=dialogSteps.length){const item={id:Date.now(),date:resolveDialogDate(dialogData.date),time:resolveDialogTime(dialogData.time),duration:resolveDuration(dialogData.duration),customer:dialogData.customer,address:dialogData.address,job:dialogData.job,notes:''};if(!item.time){q('#assistantQuestion').textContent='Uhrzeit nicht erkannt';q('#assistantStep').textContent='Bitte Termin neu starten und die Uhrzeit z. B. als „8 Uhr 30“ angeben.';return}const conflict=findConflict(item);if(conflict){q('#assistantQuestion').textContent='⚠ Termin überschneidet sich';q('#assistantStep').textContent='Bereits belegt: '+conflict.time+' · '+conflict.customer;speakQuestion('Der Termin überschneidet sich mit einem bestehenden Termin.');return}appointments.push(item);persistAppointments();q('#assistantQuestion').textContent='✓ Termin gespeichert';q('#assistantStep').textContent='Der Termin wurde dauerhaft in den Kalender übernommen.';q('#voiceParse').textContent='Gespeichert';speakQuestion('Termin gespeichert.');renderHomeAppointments();return}const answer=q('#voiceInput').value.trim();if(!answer){q('#voiceInput').focus();return}const step=dialogSteps[dialogIndex];if(step.key==='address'){dialogData.address=answer;addressConfirmed=false;q('#addressCheckText').textContent=answer;q('#addressCheck').classList.add('show');q('#assistantQuestion').textContent='Bitte prüfe, ob diese Adresse wirklich stimmt.';q('#assistantStep').textContent='Navigation öffnen und anschließend bestätigen.';speakQuestion('Bitte prüfe die Adresse in der Navigation und bestätige sie anschließend.');return}dialogData[step.key]=answer;dialogIndex++;renderDialog()});onTap('#openAddressMap',()=>openMap(dialogData.address));onTap('#confirmAddress',()=>{if(!dialogData.address)return;addressConfirmed=true;q('#addressCheck').classList.remove('show');dialogIndex++;renderDialog()});q('#voiceInput').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();q('#voiceParse').click()}});onTap('#navWeek',()=>q('#weekView').classList.contains('active')?showHome():showWeek());onTap('#navHome',showHome);onTap('#backBtn',showHome);onTap('#prevWeek',()=>{weekStart=addDays(weekStart,-7);renderWeek()});onTap('#nextWeek',()=>{weekStart=addDays(weekStart,7);renderWeek()});onTap('#thisWeek',()=>{weekStart=getMonday(now);renderWeek()});
-  onTap('#voiceHero',()=>{showVoice();resetDialog();setTimeout(startListening,250)});
+  onTap('#openWeek',showWeek);onTap('#openManual',showManual);onTap('#navManual',showManual);onTap('#manualBack',showHome);onTap('#manualSave',saveManual);onTap('#manualMap',()=>openMap(q('#manualAddress').value.trim()));onTap('#openNavigation',showNavigation);onTap('#navNavigation',showNavigation);onTap('#navigationBack',showHome);onTap('#refreshTraffic',renderNavigation);onTap('#startRoute',()=>{const a=nextAppointment();if(a)openMap(a.address)});onTap('#openVoice',()=>{showVoice();resetDialog()});onTap('#startVoiceNow',()=>{showVoice();resetDialog()});onTap('#voiceBack',showHome);onTap('#voiceClear',resetDialog);onTap('#voiceMic',startListening);onTap('#voiceParse',()=>{if(dialogIndex>=dialogSteps.length){const item={id:Date.now(),date:resolveDialogDate(dialogData.date),time:resolveDialogTime(dialogData.time),duration:resolveDuration(dialogData.duration),customer:dialogData.customer,address:dialogData.address,job:dialogData.job,notes:''};if(!item.time){q('#assistantQuestion').textContent='Uhrzeit nicht erkannt';q('#assistantStep').textContent='Bitte Termin neu starten und die Uhrzeit z. B. als „8 Uhr 30“ angeben.';return}const conflict=findConflict(item);if(conflict){q('#assistantQuestion').textContent='⚠ Termin überschneidet sich';q('#assistantStep').textContent='Bereits belegt: '+conflict.time+' · '+conflict.customer;speakQuestion('Der Termin überschneidet sich mit einem bestehenden Termin.');return}appointments.push(item);persistAppointments();q('#assistantQuestion').textContent='✓ Termin gespeichert';q('#assistantStep').textContent='Der Termin wurde dauerhaft in den Kalender übernommen.';q('#voiceParse').textContent='Gespeichert';speakQuestion('Termin gespeichert.');renderHomeAppointments();return}const answer=q('#voiceInput').value.trim();if(!answer){q('#voiceInput').focus();return}const step=dialogSteps[dialogIndex];if(step.key==='address'){dialogData.address=answer;addressConfirmed=false;q('#addressCheckText').textContent=answer;q('#addressCheck').classList.add('show');q('#assistantQuestion').textContent='Bitte prüfe, ob diese Adresse wirklich stimmt.';q('#assistantStep').textContent='Navigation öffnen und anschließend bestätigen.';speakQuestion('Bitte prüfe die Adresse in der Navigation und bestätige sie anschließend.');return}dialogData[step.key]=answer;dialogIndex++;renderDialog()});onTap('#openAddressMap',()=>openMap(dialogData.address));onTap('#confirmAddress',()=>{if(!dialogData.address)return;addressConfirmed=true;q('#addressCheck').classList.remove('show');dialogIndex++;renderDialog()});q('#voiceInput').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();q('#voiceParse').click()}});onTap('#navWeek',()=>q('#weekView').classList.contains('active')?showHome():showWeek());onTap('#navHome',showHome);onTap('#backBtn',showHome);onTap('#prevWeek',()=>{weekStart=addDays(weekStart,-7);renderWeek()});onTap('#nextWeek',()=>{weekStart=addDays(weekStart,7);renderWeek()});onTap('#thisWeek',()=>{weekStart=getMonday(now);renderWeek()});
+  onTap('#voiceHero',()=>{showVoice();resetDialog()});
   renderHomeAppointments();
   updateCountdown();
   setInterval(updateCountdown,30000);
