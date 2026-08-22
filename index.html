@@ -34,7 +34,9 @@
 #karsak-modern .date-chip{background:rgba(242,184,75,.1);border:1px solid rgba(242,184,75,.3);color:#f5c763;border-radius:999px;padding:8px 11px;font-size:12px;font-weight:800;white-space:nowrap}
 #karsak-modern .countdown{margin-top:14px;background:#0b1218;border:1px solid #18232d;border-radius:18px;padding:14px 15px;display:flex;align-items:center;justify-content:space-between;gap:12px}
 #karsak-modern .countdown .label{font-size:11px;color:#7f8b96;text-transform:uppercase;letter-spacing:1.3px;font-weight:800}
-#karsak-modern .countdown .name{font-size:14px;font-weight:900;margin-top:3px}
+#karsak-modern .countdown .name{font-size:14px;font-weight:900;margin-top:3px;line-height:1.35}
+#karsak-modern .countdown .name .where{display:block;font-size:11px;font-weight:650;color:#9aa7b2;margin-top:3px}
+#karsak-modern .countdown .name .drive{display:block;font-size:11px;font-weight:800;color:#f2b84b;margin-top:4px}
 #karsak-modern .countdown .timeleft{font-size:24px;font-weight:950;color:#f2b84b;white-space:nowrap}
 #karsak-modern .countdown.alert{border-color:rgba(242,184,75,.45);background:linear-gradient(145deg,rgba(242,184,75,.11),#0b1218)}
 #karsak-modern .countdown.overdue{border-color:rgba(255,87,87,.7);background:linear-gradient(145deg,rgba(255,87,87,.16),#0b1218);animation:karsakPulse 1.2s ease-in-out infinite}
@@ -469,7 +471,7 @@
       const parts=appt.time.split(':').map(Number);
       const target=new Date(current);
       target.setHours(parts[0],parts[1],0,0);
-      if(target>current){next={target,name:appt.customer,time:appt.time};break}
+      if(target>current){next={target,name:appt.customer,time:appt.time,address:appt.address||''};break}
       const lateMinutes=Math.floor((current-target)/60000);
       if(lateMinutes>=0 && lateMinutes<=60)overdue={target,name:appt.customer,time:appt.time,lateMinutes};
     }
@@ -489,7 +491,11 @@
     const minutes=Math.floor(diff/60000);
     const hours=Math.floor(minutes/60);
     const mins=minutes%60;
-    q('#countdownName').textContent=next.name+' · '+next.time;
+    const drive=30+simulatedTrafficDelay();
+    const buffer=15;
+    const leaveMinutes=minutes(next.time)-drive-buffer;
+    const leaveTime=formatClock(leaveMinutes);
+    q('#countdownName').innerHTML=next.name+' · '+next.time+(next.address?'<span class="where">📍 '+next.address+'</span>':'')+'<span class="drive">🚗 Fahrzeit ab aktuellem Standort: ca. '+drive+' Min</span><span class="drive">⏰ Späteste Abfahrt: ca. '+leaveTime+' Uhr</span>';
     q('#countdownTime').textContent=(hours?hours+' Std ':'')+String(mins).padStart(2,'0')+' Min';
     box.classList.toggle('alert',minutes<=60);
   }
