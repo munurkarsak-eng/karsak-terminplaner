@@ -1,17 +1,397 @@
 <!DOCTYPE html>
-<html lang="de"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#07111b"><title>Dachdecker Karsak – Terminplaner</title><style>body{margin:0;font-family:Arial;background:#07111b;color:#fff}.app{max-width:700px;margin:auto;padding:18px 16px 100px}.logo{text-align:center;color:#f0b83f}.logo h1{color:#fff;letter-spacing:3px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.big,.card,button,input,textarea,select{border-radius:14px}.big{background:#13202c;border:1px solid #30404f;color:#fff;padding:20px;font-weight:bold;font-size:17px}.card{background:#101b27;border:1px solid #30404f;padding:16px;margin-top:16px}.gold{background:#f0b83f;color:#16120b}.secondary{background:#1c2a38;color:#fff}.danger{background:#5b2226;color:#fff}button{border:0;padding:12px;font-size:16px;font-weight:bold}input,textarea,select{width:100%;box-sizing:border-box;background:#0c1620;color:#fff;border:1px solid #3a4b5b;padding:12px;margin:6px 0 12px}.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.screen{display:none}.screen.active{display:block}.appointment{border-top:1px solid #384655;padding:12px 0}.time{color:#ffd46b;font-weight:bold}.warning{background:#40191c;border:1px solid #e14c4c;padding:12px;border-radius:12px}.success{background:#153a26;border:1px solid #39b96b;padding:12px;border-radius:12px}.full{width:100%;margin-top:10px}.bottom{position:fixed;bottom:0;left:0;right:0;background:#09131d;border-top:1px solid #334353}.bottom div{max-width:700px;margin:auto;display:grid;grid-template-columns:repeat(4,1fr)}.bottom button{background:none;color:#fff;font-size:13px}</style></head><body><div class="app">
-<section id="home" class="screen active"><div class="logo"><div style="font-size:60px">⌂K</div><small>DACHDECKER</small><h1>KARSAK</h1><h2>TERMINPLANER</h2></div><div class="grid"><button class="big" onclick="show('calendar')">📅<br>KALENDER</button><button class="big" onclick="show('voice')">🎤<br>TERMIN SPRECHEN</button><button class="big" onclick="newAppt()">➕<br>NEUER TERMIN</button><button class="big" onclick="nextNav()">📍<br>NAVIGATION</button></div><div class="card"><h3>HEUTIGE TERMINE</h3><div id="today"></div></div></section>
-<section id="calendar" class="screen"><button class="secondary" onclick="show('home')">← Zurück</button><div class="card"><h3>📅 Kalender</h3><input type="date" id="calDate" onchange="renderDay()"><div id="dayList"></div><button class="gold full" onclick="newFromDay()">+ Termin an diesem Tag</button></div></section>
-<section id="editor" class="screen"><button class="secondary" onclick="show('home')">← Zurück</button><div class="card"><h3>➕ Neuer Termin</h3><input type="hidden" id="editId"><label>Datum</label><input type="date" id="date"><div class="row"><div><label>Beginn</label><input type="time" id="start"></div><div><label>Ende</label><input type="time" id="end"></div></div><label>Kunde / Name</label><input id="customer"><label>Baustellenadresse</label><input id="address"><label>Telefonnummer</label><input id="phone"><label>Notiz</label><textarea id="note"></textarea><label>Fahrzeit-Puffer</label><select id="buffer"><option>0</option><option>15</option><option selected>30</option><option>45</option><option>60</option></select><div id="warn"></div><button class="gold full" onclick="checkSave()">TERMIN PRÜFEN & SPEICHERN</button></div></section>
-<section id="voice" class="screen"><button class="secondary" onclick="show('home')">← Zurück</button><div class="card" style="text-align:center"><h3>🎤 Termin sprechen</h3><div style="font-size:70px">🎤</div><div id="voiceText">Noch nichts gesprochen.</div><button class="gold full" onclick="startVoice()">SPRACHEINGABE STARTEN</button><button class="secondary full" onclick="useVoice()">Erkannte Angaben übernehmen</button></div></section>
-<section id="conflict" class="screen"><button class="secondary" onclick="show('editor')">← Zurück</button><div class="card"><h3>⚠️ Terminüberschneidung</h3><div id="conflictMsg" class="warning"></div><button class="gold full" onclick="show('editor')">Uhrzeit ändern</button><button class="secondary full" onclick="forceSave()">Trotzdem speichern</button></div></section>
-<section id="saved" class="screen"><button class="secondary" onclick="show('home')">← Startseite</button><div class="card"><div class="success">✅ Termin gespeichert.</div><div id="savedSum"></div><button class="gold full" onclick="navSaved()">📍 NAVIGATION STARTEN</button></div></section></div>
-<div class="bottom"><div><button onclick="show('home')">🏠<br>Start</button><button onclick="show('calendar')">📅<br>Kalender</button><button onclick="newAppt()">➕<br>Termin</button><button onclick="nextNav()">📍<br>Navigation</button></div></div>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta name="theme-color" content="#176b3a">
+<title>Dachdecker Karsak – Terminplaner</title>
+
+<style>
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:#f3f5f4;
+  color:#17211b;
+  padding-bottom:85px
+}
+header{
+  background:#176b3a;
+  color:white;
+  padding:18px;
+  text-align:center
+}
+header h1{margin:0;font-size:25px}
+header p{margin:5px 0 0;font-size:14px}
+.screen{display:none;padding:15px;max-width:800px;margin:auto}
+.screen.active{display:block}
+.card{
+  background:white;
+  border-radius:16px;
+  padding:16px;
+  margin-bottom:14px;
+  box-shadow:0 2px 9px #0002
+}
+h2{margin-top:0}
+label{
+  display:block;
+  font-weight:bold;
+  margin:12px 0 5px
+}
+input,textarea,select{
+  width:100%;
+  font-size:18px;
+  padding:13px;
+  border:1px solid #bbb;
+  border-radius:10px;
+  background:white
+}
+textarea{min-height:100px;resize:vertical}
+button{
+  border:0;
+  border-radius:11px;
+  padding:13px 15px;
+  font-size:17px;
+  font-weight:bold;
+  cursor:pointer
+}
+.primary{background:#176b3a;color:white;width:100%;margin-top:14px}
+.secondary{background:#e7ece9;color:#17211b}
+.danger{background:#b3261e;color:white}
+.big{
+  width:100%;
+  min-height:70px;
+  margin:7px 0;
+  background:white;
+  border:2px solid #176b3a;
+  color:#176b3a;
+  font-size:19px
+}
+.row{display:flex;gap:9px}
+.row>*{flex:1}
+.appointment{
+  border-left:6px solid #176b3a;
+  background:#f6faf7;
+  padding:12px;
+  margin:9px 0;
+  border-radius:8px
+}
+.appointment b{font-size:18px}
+.small{font-size:13px;color:#657069}
+.empty{text-align:center;color:#777;padding:25px}
+.bottom{
+  position:fixed;
+  bottom:0;
+  left:0;
+  right:0;
+  height:72px;
+  background:white;
+  border-top:1px solid #ccc;
+  display:flex;
+  z-index:10
+}
+.bottom button{
+  flex:1;
+  background:white;
+  color:#333;
+  border-radius:0;
+  padding:5px;
+  font-size:12px
+}
+.bottom button span{display:block;font-size:23px;margin-bottom:2px}
+.voice{
+  background:#176b3a;
+  color:white;
+  width:100%;
+  font-size:19px;
+  min-height:65px
+}
+.back{margin-bottom:12px}
+.today{
+  background:#e7f4eb;
+  border:1px solid #9ac5a6
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>🏠 Dachdecker Karsak</h1>
+<p>Terminplaner</p>
+</header>
+
+<section id="home" class="screen active">
+  <div class="card">
+    <h2>Heute</h2>
+    <div id="todayList"></div>
+  </div>
+
+  <button class="big" onclick="newAppointment()">➕ Neuer Termin</button>
+  <button class="big" onclick="show('calendar')">📅 Kalender</button>
+  <button class="big" onclick="show('voice')">🎤 Spracheingabe</button>
+  <button class="big" onclick="show('saved')">📋 Alle Termine</button>
+</section>
+
+<section id="calendar" class="screen">
+  <button class="secondary back" onclick="show('home')">← Zurück</button>
+  <div class="card">
+    <h2>📅 Kalender</h2>
+    <label>Datum auswählen</label>
+    <input type="date" id="calDate" onchange="renderCalendar()">
+    <div id="calendarList"></div>
+  </div>
+</section>
+
+<section id="editor" class="screen">
+  <button class="secondary back" onclick="show('home')">← Zurück</button>
+
+  <div class="card">
+    <h2 id="editorTitle">Neuer Termin</h2>
+
+    <label>Datum *</label>
+    <input type="date" id="date">
+
+    <div class="row">
+      <div>
+        <label>Von *</label>
+        <input type="time" id="start">
+      </div>
+      <div>
+        <label>Bis</label>
+        <input type="time" id="end">
+      </div>
+    </div>
+
+    <label>Kunde / Name *</label>
+    <input id="customer" placeholder="z.B. Herr Müller">
+
+    <label>Adresse / Baustelle</label>
+    <input id="address" placeholder="Straße, Ort">
+
+    <label>Telefon</label>
+    <input id="phone" type="tel" placeholder="Telefonnummer">
+
+    <label>Arbeit / Termin</label>
+    <input id="job" placeholder="z.B. Dach besichtigen">
+
+    <label>Notizen</label>
+    <textarea id="notes" placeholder="Weitere Informationen"></textarea>
+
+    <button class="primary" onclick="saveAppointment()">💾 Termin speichern</button>
+    <button id="deleteBtn" class="danger" style="display:none;width:100%;margin-top:10px" onclick="deleteAppointment()">🗑 Termin löschen</button>
+  </div>
+</section>
+
+<section id="voice" class="screen">
+  <button class="secondary back" onclick="show('home')">← Zurück</button>
+  <div class="card">
+    <h2>🎤 Spracheingabe</h2>
+    <p>Tippe auf den Knopf und sprich deinen Termin.</p>
+    <p class="small">Beispiel: „Morgen um 10 Uhr Herr Müller Dach besichtigen“</p>
+    <button class="voice" onclick="startVoice()">🎤 Jetzt sprechen</button>
+    <div id="voiceText" style="margin-top:15px"></div>
+  </div>
+</section>
+
+<section id="saved" class="screen">
+  <button class="secondary back" onclick="show('home')">← Zurück</button>
+  <div class="card">
+    <h2>📋 Alle Termine</h2>
+    <div id="allList"></div>
+  </div>
+</section>
+
+<div class="bottom">
+  <button onclick="show('home')"><span>🏠</span>Heute</button>
+  <button onclick="show('calendar')"><span>📅</span>Kalender</button>
+  <button onclick="newAppointment()"><span>➕</span>Termin</button>
+  <button onclick="show('voice')"><span>🎤</span>Sprache</button>
+</div>
+
 <script>
-let A=JSON.parse(localStorage.getItem('karsakAppointments')||'[]'),P=null,L=null,S='';const $=x=>document.getElementById(x);function save(){localStorage.setItem('karsakAppointments',JSON.stringify(A))}function show(id){document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));$(id).classList.add('active');if(id==='home')renderToday();if(id==='calendar')renderDay();scrollTo(0,0)}function iso(d=new Date()){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}function gdate(s){if(!s)return'';let[y,m,d]=s.split('-');return d+'.'+m+'.'+y}function mins(t){let[h,m]=t.split(':').map(Number);return h*60+m}function add(t,n){let x=mins(t)+n;return String(Math.floor(x/60)%24).padStart(2,'0')+':'+String(x%60).padStart(2,'0')}function esc(t){return String(t||'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;')}
-function list(items,target){let c=$(target);c.innerHTML='';items.sort((a,b)=>a.start.localeCompare(b.start));if(!items.length){c.innerHTML='<p>Keine Termine eingetragen.</p>';return}items.forEach(a=>{let d=document.createElement('div');d.className='appointment';d.innerHTML=`<div class="time">${a.start} – ${a.end}</div><b>${esc(a.customer)||'Ohne Namen'}</b><div>📍 ${esc(a.address)||'Keine Adresse'}<br>${a.phone?'📞 '+esc(a.phone)+'<br>':''}${a.note?'📝 '+esc(a.note):''}</div><p><button class="gold" onclick="nav('${a.id}')">Navigation</button> <button class="secondary" onclick="edit('${a.id}')">Bearbeiten</button> <button class="danger" onclick="del('${a.id}')">Löschen</button></p>`;c.appendChild(d)})}
-function renderToday(){list(A.filter(a=>a.date===iso()),'today')}function renderDay(){if(!$('calDate').value)$('calDate').value=iso();list(A.filter(a=>a.date===$('calDate').value),'dayList')}function clearE(){['editId','date','start','end','customer','address','phone','note'].forEach(i=>$(i).value='');$('warn').innerHTML=''}function newAppt(){clearE();$('date').value=iso();$('start').value='08:00';$('end').value='09:00';show('editor')}function newFromDay(){clearE();$('date').value=$('calDate').value||iso();$('start').value='08:00';$('end').value='09:00';show('editor')}function data(){return{id:$('editId').value||Date.now().toString(),date:$('date').value,start:$('start').value,end:$('end').value,customer:$('customer').value.trim(),address:$('address').value.trim(),phone:$('phone').value.trim(),note:$('note').value.trim(),buffer:Number($('buffer').value)}}
-function checkSave(){let a=data();if(!a.date||!a.start||!a.end){$('warn').innerHTML='<div class="warning">Bitte Datum, Beginn und Ende eingeben.</div>';return}if(a.end<=a.start){$('warn').innerHTML='<div class="warning">Endzeit muss nach Startzeit liegen.</div>';return}let c=conflict(a);if(c){P=a;$('conflictMsg').innerHTML=c;show('conflict')}else store(a)}function conflict(a){let s=mins(a.start),e=mins(a.end),b=a.buffer||0;for(let o of A.filter(x=>x.date===a.date&&x.id!==a.id)){let os=mins(o.start),oe=mins(o.end);if(s<oe&&e>os)return `Dieser Termin überschneidet sich mit <b>${o.start}–${o.end}</b> ${esc(o.customer)}.`;if(e<=os&&os-e<b)return `Zwischen den Terminen bleiben nur <b>${os-e} Minuten</b>.`;if(s>=oe&&s-oe<b)return `Für die Anfahrt bleiben nur <b>${s-oe} Minuten</b>.`}return null}function forceSave(){if(P){store(P);P=null}}function store(a){let i=A.findIndex(x=>x.id===a.id);i>=0?A[i]=a:A.push(a);save();L=a;$('savedSum').innerHTML=`<p><b>${gdate(a.date)} ${a.start}–${a.end}</b><br>${esc(a.customer)}<br>📍 ${esc(a.address)}</p>`;show('saved')}function edit(id){let a=A.find(x=>x.id===id);if(!a)return;$('editId').value=a.id;['date','start','end','customer','address','phone','note'].forEach(k=>$(k).value=a[k]||'');$('buffer').value=a.buffer??30;show('editor')}function del(id){if(confirm('Termin wirklich löschen?')){A=A.filter(a=>a.id!==id);save();renderToday();renderDay()}}function maps(addr){open('https://www.google.com/maps/dir/?api=1&destination='+encodeURIComponent(addr),'_blank')}function nav(id){let a=A.find(x=>x.id===id);a&&a.address?maps(a.address):alert('Keine Adresse gespeichert.')}function navSaved(){L&&L.address?maps(L.address):alert('Keine Adresse gespeichert.')}function nextNav(){let n=new Date(),m=n.getHours()*60+n.getMinutes(),a=A.filter(x=>x.date===iso()&&mins(x.start)>=m&&x.address).sort((x,y)=>x.start.localeCompare(y.start))[0];a?maps(a.address):alert('Kein kommender Termin mit Adresse gefunden.')}
-function startVoice(){let R=window.SpeechRecognition||window.webkitSpeechRecognition;if(!R){alert('Bitte Chrome verwenden.');return}let r=new R();r.lang='de-DE';r.start();r.onresult=e=>{S=e.results[0][0].transcript;$('voiceText').textContent=S}}function useVoice(){if(!S){alert('Bitte zuerst sprechen.');return}clearE();let l=S.toLowerCase(),d=new Date();if(l.includes('übermorgen'))d.setDate(d.getDate()+2);else if(l.includes('morgen'))d.setDate(d.getDate()+1);$('date').value=iso(d);let t=l.match(/(?:um\s*)?(\d{1,2})(?::|\.| uhr\s*)(\d{2})?/);let st=t?String(Number(t[1])).padStart(2,'0')+':'+String(Number(t[2]||0)).padStart(2,'0'):'08:00';$('start').value=st;$('end').value=add(st,60);$('note').value=S;show('editor')}
-$('calDate').value=iso();renderToday();
-</script></body></html>
+const KEY="karsakAppointmentsV2";
+let appointments=JSON.parse(localStorage.getItem(KEY)||"[]");
+let editingId=null;
+
+function iso(d=new Date()){
+  let y=d.getFullYear();
+  let m=String(d.getMonth()+1).padStart(2,"0");
+  let day=String(d.getDate()).padStart(2,"0");
+  return `${y}-${m}-${day}`;
+}
+
+function esc(s){
+  return String(s||"")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;");
+}
+
+function show(id){
+  document.querySelectorAll(".screen").forEach(x=>x.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+
+  if(id==="home") renderToday();
+  if(id==="calendar") renderCalendar();
+  if(id==="saved") renderAll();
+
+  window.scrollTo(0,0);
+}
+
+function sorted(items){
+  return [...items].sort((a,b)=>
+    (a.date+" "+a.start).localeCompare(b.date+" "+b.start)
+  );
+}
+
+function appointmentHTML(a){
+  return `
+    <div class="appointment" onclick="editAppointment('${a.id}')">
+      <b>${esc(a.start||"")} ${esc(a.customer)}</b><br>
+      ${a.end ? esc(a.start)+" – "+esc(a.end)+" Uhr<br>" : ""}
+      ${a.job ? "🔨 "+esc(a.job)+"<br>" : ""}
+      ${a.address ? "📍 "+esc(a.address)+"<br>" : ""}
+      ${a.phone ? "📞 "+esc(a.phone)+"<br>" : ""}
+      ${a.notes ? "<span class='small'>"+esc(a.notes)+"</span>" : ""}
+    </div>`;
+}
+
+function list(items,target){
+  const box=document.getElementById(target);
+  if(!items.length){
+    box.innerHTML="<div class='empty'>Keine Termine vorhanden</div>";
+    return;
+  }
+  box.innerHTML=sorted(items).map(appointmentHTML).join("");
+}
+
+function renderToday(){
+  list(appointments.filter(a=>a.date===iso()),"todayList");
+}
+
+function renderCalendar(){
+  let d=document.getElementById("calDate").value || iso();
+  document.getElementById("calDate").value=d;
+  list(appointments.filter(a=>a.date===d),"calendarList");
+}
+
+function renderAll(){
+  list(appointments,"allList");
+}
+
+function newAppointment(){
+  editingId=null;
+  document.getElementById("editorTitle").textContent="Neuer Termin";
+  document.getElementById("deleteBtn").style.display="none";
+
+  document.getElementById("date").value=iso();
+  document.getElementById("start").value="";
+  document.getElementById("end").value="";
+  document.getElementById("customer").value="";
+  document.getElementById("address").value="";
+  document.getElementById("phone").value="";
+  document.getElementById("job").value="";
+  document.getElementById("notes").value="";
+
+  show("editor");
+}
+
+function editAppointment(id){
+  const a=appointments.find(x=>x.id===id);
+  if(!a)return;
+
+  editingId=id;
+  document.getElementById("editorTitle").textContent="Termin bearbeiten";
+  document.getElementById("deleteBtn").style.display="block";
+
+  document.getElementById("date").value=a.date||"";
+  document.getElementById("start").value=a.start||"";
+  document.getElementById("end").value=a.end||"";
+  document.getElementById("customer").value=a.customer||"";
+  document.getElementById("address").value=a.address||"";
+  document.getElementById("phone").value=a.phone||"";
+  document.getElementById("job").value=a.job||"";
+  document.getElementById("notes").value=a.notes||"";
+
+  show("editor");
+}
+
+function saveAppointment(){
+  const a={
+    id:editingId || String(Date.now()),
+    date:document.getElementById("date").value,
+    start:document.getElementById("start").value,
+    end:document.getElementById("end").value,
+    customer:document.getElementById("customer").value.trim(),
+    address:document.getElementById("address").value.trim(),
+    phone:document.getElementById("phone").value.trim(),
+    job:document.getElementById("job").value.trim(),
+    notes:document.getElementById("notes").value.trim()
+  };
+
+  if(!a.date || !a.start || !a.customer){
+    alert("Bitte Datum, Uhrzeit und Kunde eintragen.");
+    return;
+  }
+
+  if(editingId){
+    appointments=appointments.map(x=>x.id===editingId?a:x);
+  }else{
+    appointments.push(a);
+  }
+
+  localStorage.setItem(KEY,JSON.stringify(appointments));
+  editingId=null;
+  alert("Termin gespeichert.");
+  show("home");
+}
+
+function deleteAppointment(){
+  if(!editingId)return;
+  if(!confirm("Diesen Termin wirklich löschen?"))return;
+
+  appointments=appointments.filter(x=>x.id!==editingId);
+  localStorage.setItem(KEY,JSON.stringify(appointments));
+  editingId=null;
+  show("home");
+}
+
+function startVoice(){
+  const SpeechRecognition=
+    window.SpeechRecognition || window.webkitSpeechRecognition;
+
+  if(!SpeechRecognition){
+    alert("Die Spracheingabe wird von diesem Browser nicht unterstützt.");
+    return;
+  }
+
+  const r=new SpeechRecognition();
+  r.lang="de-DE";
+  r.interimResults=false;
+
+  document.getElementById("voiceText").innerHTML="<b>Ich höre zu …</b>";
+
+  r.onresult=function(e){
+    const text=e.results[0][0].transcript;
+    document.getElementById("voiceText").innerHTML=
+      "<b>Erkannt:</b><br>"+esc(text);
+
+    newAppointment();
+    document.getElementById("notes").value=text;
+  };
+
+  r.onerror=function(){
+    document.getElementById("voiceText").textContent=
+      "Sprache konnte nicht erkannt werden.";
+  };
+
+  r.start();
+}
+
+document.getElementById("calDate").value=iso();
+renderToday();
+</script>
+
+</body>
+</html>
